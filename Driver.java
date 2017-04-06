@@ -28,6 +28,9 @@ public class Driver {
         //makes predictions based on global edit distance
         //globalEditDistance();
 
+        //makes predictions based on N-Gram
+        System.out.println(NGram.calculateDist("crat", "cart", 2));
+
     }
 
     public static void globalEditDistance(){
@@ -38,6 +41,8 @@ public class Driver {
 
             upNames.add(names.get(i).toUpperCase());
         }
+
+        int counter = 0;
 
 
         for (int i = 0; i < persian.size(); i++){
@@ -82,10 +87,18 @@ public class Driver {
                 System.out.println("predicted name(s) for: " + persian.get(i)+ " => " + possibleNames);
             }
 
+            if (counter == 100){
+
+                break;
+            }
+            else{
+                counter = counter +1;
+            }
+
         }
 
         //print stats about the accuracy
-        System.out.println(correctPrediction + " names were predicted correctly out of: " + persian.size());
+        System.out.println(correctPrediction + " names were predicted correctly out of: " + counter);
 
     }
 
@@ -269,7 +282,7 @@ public class Driver {
                 return replace;
 
             }
-            
+
             return (replace + 1);
         }
 
