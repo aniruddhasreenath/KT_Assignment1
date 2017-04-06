@@ -12,11 +12,27 @@ public class Driver {
     public static ArrayList<String> test = new ArrayList<String>();
     public static ArrayList<String> persian = new ArrayList<String>();
     public static ArrayList<String> english = new ArrayList<String>();
+    public static ArrayList<String> upEnglish = new ArrayList<String>();
 
     public static void main(String[] args) throws IOException{
 
         //reads all the data into the arrays
         readFromFiles();
+
+        //convert all the english names to CAPS
+        for(int i = 0; i < english.size(); i++){
+
+            upEnglish.add(english.get(i).toUpperCase());
+        }
+
+        //makes predictions based on global edit distance
+        //globalEditDistance();
+
+    }
+
+    public static void globalEditDistance(){
+
+        int correctPrediction = 0;
 
         for(int i = 0; i < names.size() -1 ; i++){
 
@@ -24,7 +40,7 @@ public class Driver {
         }
 
 
-        for (int i = 0; i < test.size(); i++){
+        for (int i = 0; i < persian.size(); i++){
 
             ArrayList<Integer> tmp = new ArrayList<Integer>();
 
@@ -32,7 +48,7 @@ public class Driver {
 
                 //System.out.println(editDistance(test.get(i), upNames.get(j)) + " name " + upNames.get(j));
 
-                tmp.add(editDistance(test.get(i), upNames.get(j)));
+                tmp.add(editDistance(persian.get(i), upNames.get(j)));
 
             }
 
@@ -56,10 +72,20 @@ public class Driver {
 
 
             }
-            
-            //TODO start here implement some way to choose the best name or store the names that are selected
-            //System.out.println(possibleNames);
+
+
+            if (possibleNames.contains(upEnglish.get(i))){
+                correctPrediction = correctPrediction + 1;
+                System.out.println("predicted name(s) for: " + persian.get(i)+ " => " + possibleNames + " CORRECT PREDICTION ");
+            }
+            else{
+                System.out.println("predicted name(s) for: " + persian.get(i)+ " => " + possibleNames);
+            }
+
         }
+
+        //print stats about the accuracy
+        System.out.println(correctPrediction + " names were predicted correctly out of: " + persian.size());
 
     }
 
@@ -194,6 +220,37 @@ public class Driver {
 
     public static int matchOrReplace(String wrd1, String wrd2, int j, int k, int match, int replace){
 
+        ArrayList<Character> set1 = new ArrayList<Character>();
+        set1.add('A');
+        set1.add('E');
+        set1.add('H');
+        set1.add('I');
+        set1.add('O');
+        set1.add('U');
+        set1.add('W');
+        set1.add('Y');
+        ArrayList<Character> set2 = new ArrayList<Character>();
+        set2.add('B');
+        set2.add('P');
+        set2.add('F');
+        set2.add('V');
+        ArrayList<Character> set3 = new ArrayList<Character>();
+        set3.add('C');
+        set3.add('G');
+        set3.add('J');
+        set3.add('K');
+        set3.add('Q');
+        set3.add('S');
+        set3.add('X');
+        set3.add('Z');
+        ArrayList<Character> set4 = new ArrayList<Character>();
+        set4.add('D');
+        set4.add('T');
+        ArrayList<Character> set5 = new ArrayList<Character>();
+        set5.add('M');
+        set5.add('N');
+
+
         //if there is a match return 0 else return 1
         if (wrd1.charAt(k-1) == wrd2.charAt(j-1)){
 
@@ -201,8 +258,19 @@ public class Driver {
 
         }
         else{
+
+            char a = wrd1.charAt(k-1);
+            char b = wrd2.charAt(j-1);
+
             //this is the cost of replacing
-            return replace;
+            if(set1.contains(a) && set1.contains(b) || set2.contains(a) && set2.contains(b) || set3.contains(a) && set3.contains(b)
+                    || set4.contains(a) && set4.contains(b) || set5.contains(a) && set5.contains(b)){
+
+                return replace;
+
+            }
+            
+            return (replace + 1);
         }
 
 
