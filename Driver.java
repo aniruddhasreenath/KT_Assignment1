@@ -26,14 +26,13 @@ public class Driver {
         }
 
         //makes predictions based on global edit distance
-        //globalEditDistance();
+        spellingCorrection("ged", 0);
 
         //makes predictions based on N-Gram
-        System.out.println(NGram.calculateDist("crat", "cart", 2));
-
+        spellingCorrection("ngrm", 2);
     }
 
-    public static void globalEditDistance(){
+    public static void spellingCorrection(String trig, int n){
 
         int correctPrediction = 0;
 
@@ -51,10 +50,15 @@ public class Driver {
 
             for(int j = 0; j < upNames.size(); j++){
 
-                //System.out.println(editDistance(test.get(i), upNames.get(j)) + " name " + upNames.get(j));
-
-                tmp.add(editDistance(persian.get(i), upNames.get(j)));
-
+                if (trig.equals("ged")){
+                    tmp.add(editDistance(persian.get(i), upNames.get(j)));
+                }
+                else if (trig.equals("ngrm")){
+                    tmp.add(NGram.calculateDist(persian.get(i), upNames.get(j), n));
+                }
+                else{
+                    tmp.add(editDistance(persian.get(i), upNames.get(j)));
+                }
             }
 
             //find min value
@@ -78,7 +82,6 @@ public class Driver {
 
             }
 
-
             if (possibleNames.contains(upEnglish.get(i))){
                 correctPrediction = correctPrediction + 1;
                 System.out.println("predicted name(s) for: " + persian.get(i)+ " => " + possibleNames + " CORRECT PREDICTION ");
@@ -87,6 +90,7 @@ public class Driver {
                 System.out.println("predicted name(s) for: " + persian.get(i)+ " => " + possibleNames);
             }
 
+
             if (counter == 100){
 
                 break;
@@ -94,6 +98,7 @@ public class Driver {
             else{
                 counter = counter +1;
             }
+
 
         }
 
@@ -151,7 +156,7 @@ public class Driver {
 
     public static int editDistance(String one, String two){
 
-        //parameters
+        //Parameters of Global Edit Distance
         int ins = 1;
         int del = 1;
         int match = 0;
@@ -180,10 +185,6 @@ public class Driver {
                 matrix[j][k] = findMinOrMax(matrix, j, k, ins, del, match, replace, one, two);
             }
         }
-
-
-
-        //printMatrix(matrix);
 
         return matrix[lengthTwo][lengthOne];
     }
@@ -233,6 +234,7 @@ public class Driver {
 
     public static int matchOrReplace(String wrd1, String wrd2, int j, int k, int match, int replace){
 
+        //Soundex characters that are similar enough to form sets
         ArrayList<Character> set1 = new ArrayList<Character>();
         set1.add('A');
         set1.add('E');
@@ -287,21 +289,6 @@ public class Driver {
         }
 
 
-    }
-
-    public static void printMatrix(int[][] mat){
-
-        int a = mat.length;
-        int b = mat[0].length;
-
-
-        for(int i = 0; i < a; i++){
-            for(int j = 0; j < b; j++){
-                System.out.print(mat[i][j] + "  ");
-            }
-            System.out.println();
-            System.out.println();
-        }
     }
 
 }
